@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %} Single Post {% endblock %}
+
+
+{% block content %}
+    <!-- ======= Blog Single Section ======= -->
+    <section class="blog-wrapper sect-pt4" id="blog">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    <div class="post-box">
+                        {% if post.photo %}
+                            <div class="post-thumb">
+                                <img src="{{ post.photo.url }}" class="img-fluid" alt="">
+                            </div>
+                        {% endif %}
+                        <div class="post-meta">
+                            <h1 class="article-title">{{ post.title }}</h1>
+                            <ul>
+                                <li>
+                                    <span class="bi bi-person"></span>
+                                    <a href="#">{{ post.author }}</a>
+                                </li>
+                                <li>
+                                    <span class="bi bi-clock"></span>
+                                    <a href="#">{{ post.created_at|date:"d M Y H:i" }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="article-content">
+                            <p>{{ post.text | safe }}</p>
+                        </div>
+                        {% if request.user == post.author %}
+                            <a href="{% url 'editpost' post.id %}" class="btn btn-warning"><span
+                                    class="bi bi-pencil-square"></span> Edit</a>
+                            <a href="{% url 'deletepost' post.id %}" class="btn btn-danger"><span
+                                    class="bi bi-trash"></span> Delete</a>
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-md-6 col-sm-12">
+                                <h5>Add a Comment</h5>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6 col-sm-12">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary">Comment</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% for comment in comments %}
+                            <figure class="text-end">
+                                <blockquote class="blockquote">
+                                    <p>{{ comment.body }}</p>
+                                </blockquote>
+                                <figcaption class="blockquote-footer">
+                                    Commented by <cite title="Source Title">@{{ comment.author }} </cite>
+                                    <b>{{ comment.created_at|timesince }} ago</b>
+                                </figcaption>
+                            </figure>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
